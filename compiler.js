@@ -100,4 +100,16 @@ function Egrammer(Code){
       return "for(let "+c[0]+";"+c[1]+";"+c[2]+"){";
     }
   }
+  if(Estrcut(Code,0,1)=="if"){
+    let c=Code.replace("if ","").replace("{","");
+    if(Estrcut(Code,0,5)=="if not"){
+      return "else if("+c+"){";
+    }
+    else{
+      return "if("+c+"){";
+    }
+  }
+  if(Estrcut(Code,0,2)=="not"){
+    return "else{";
+  }
 return Code;}
