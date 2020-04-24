@@ -69,6 +69,7 @@ function e(Codes){
   Code=Code.replace(/->/gi,"*/");
   Code=Code.replace(/{/gi,"{\n");
   Code=Code.replace(/}/gi,"\n}\n");
+  Code=Code.replace(/;/gi,"");
   Code=Etest(Code);
   Ecompiler(Code,Str);
 }
@@ -154,5 +155,8 @@ function Egrammer(Code){
   }
   if(Estrcut(Code,0,2)=="not"){
     return "else{";
+  }
+  if(Estrcut(Code,0,2)=="put"){
+    return "console.log("+Code.replace("put","")+")";
   }
 return Code;}
