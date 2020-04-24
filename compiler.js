@@ -45,8 +45,8 @@ function e(Codes){
   }
   Code=newCode;
   Code=Code.replace(/:/gi,"\n");
-  Code=Code.replace(/</gi,"/*");
-  Code=Code.replace(/>/gi,"*/");
+  Code=Code.replace(/<-/gi,"/*");
+  Code=Code.replace(/->/gi,"*/");
   Code=Code.replace(/{/gi,"{\n");
   Code=Code.replace(/}/gi,"\n}\n");
   Ecompiler(Code,Str);
@@ -85,7 +85,7 @@ function Egrammer(Code){
         return "let "+Codes[0].replace("new ","")+" = "+Codes[1];
       }
       else{
-        return "const "+Codes[0].replace("new ","")+" = "+Codes[1].replace("Const");
+        return "const "+Codes[0].replace("new ","")+" = "+Codes[1].replace("Const","");
       }
     }
     else{
@@ -104,7 +104,7 @@ function Egrammer(Code){
     }
   }
   if(Estrcut(Code,0,5)=="repeat"){
-    let c=Code.replace("for ","").replace("{","").split(",");
+    let c=Code.replace("repeat ","").replace("{","").split(",");
     if(c.length==1){
       return "while("+Code.replace("repeat ","").replace("{","")+"){";
     }
