@@ -82,7 +82,12 @@ function Egrammer(Code){
     let Codes=Code.split("=");
     if(Codes[1].indexOf("Array")==-1){
       if(Codes[1].indexOf("Const")==-1){
-        return "let "+Codes[0].replace("new ","")+" = "+Codes[1];
+        if(Codes[1].indexOf("Function")==-1){
+          return "let "+Codes[0].replace("new ","")+" = "+Codes[1].replace("Function","");
+        }
+        else{
+          return "let "+Codes[0].replace("new ","")+" = "+Codes[1];
+        }
       }
       else{
         return "const "+Codes[0].replace("new ","")+" = "+Codes[1].replace("Const","");
@@ -104,12 +109,17 @@ function Egrammer(Code){
     }
   }
   if(Estrcut(Code,0,5)=="repeat"){
-    let c=Code.replace("repeat ","").replace("{","").split(",");
+    let c=Code.replace("repeat ","").replace("{","").split(" ");
     if(c.length==1){
       return "while("+Code.replace("repeat ","").replace("{","")+"){";
     }
     else{
-      return "for(let "+c[0]+";"+c[1]+";"+c[2]+"){";
+      if(c[1]=="=>"){
+        return "for(let "+c[0]+"=0;"+c[0]+"<"+c[2]+".length;"+c[0]+"++){";
+      }
+      else{
+        return "for(let "+c[0]+";"+c[1]+";"+c[2]+"){";
+      }
     }
   }
   if(Estrcut(Code,0,1)=="if"){
