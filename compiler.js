@@ -1,4 +1,4 @@
-function Ecompiler(Codes){
+function Ecompiler(Codes,Str){
   Codes=Codes.split("\n");
   let returnCodes="";
   for(let i=0;i<Codes.length;i++){
@@ -23,6 +23,9 @@ function Ecompiler(Codes){
     //end
     returnCodes=returnCodes+returnCode+"\n";
   }
+  for(let i=0;i<Str.length;i++){
+    returnCodes=returnCodes.replace("|STR|",`"`+Str[i]+`"`);
+  }
   eval(returnCodes);
 }
 function e(Codes){
@@ -44,10 +47,7 @@ function e(Codes){
   Code=Code.replace(/:/gi,"\n");
   Code=Code.replace(/{/gi,"{\n");
   Code=Code.replace(/}/gi,"\n}\n");
-  for(let i=0;i<Str.length;i++){
-    Code=Code.replace("|STR|",`"`+Str[i]+`"`);
-  }
-  Ecompiler(Code);
+  Ecompiler(Code,Str);
 }
 function reCode(Codes){
   let newCode="";
@@ -88,8 +88,16 @@ function Egrammer(Code){
   if(Estrcut(Code,0,0)=="}"){
     return "}";
   }
+  if(Estrcut(Code,0,0)=="<"){
+    return "//"+Code.replace("<","").replace(">","");
+  }
   if(Estrcut(Code,0,3)=="load"){
-    return Code.replace("load ","");
+    if(Code.replace("load ","").startsWith("http")){
+      return Code.replace("load ","//구현중 ");
+    }
+    else{
+      return Code.replace("load ","");
+    }
   }
   if(Estrcut(Code,0,5)=="repeat"){
     let c=Code.replace("for ","").replace("{","").split(",");
