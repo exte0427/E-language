@@ -1,3 +1,23 @@
+function Etest(Code){
+  let Codes=Code.split("\n");
+  let newCode="";
+  if(Codes.length<2){return Code;}
+  for(let i=1;i<Codes.length;i++){
+    if(Espace(Codes[i])+2==Espace(Codes[i-1]) || Espace(Codes[i])+4==Espace(Codes[i-1])){
+      if(Codes[i].replace(/ /gi,"")=="" && i+1!=Codes.length){newCode=newCode+Codes[i]+"\n";}
+      else{newCode=newCode+"}\n"+Codes[i]+"\n";}
+    }
+    else{
+      newCode=newCode+Codes[i]+"\n";
+    }
+  }
+  return newCode;
+}
+function Espace(Code){
+  let i;
+  for(i=0;Code.charAt(i)==" ";i++){}
+  return i;
+}
 function Ecompiler(Codes,Str){
   Codes=Codes.split("\n");
   let returnCodes="";
@@ -49,6 +69,7 @@ function e(Codes){
   Code=Code.replace(/->/gi,"*/");
   Code=Code.replace(/{/gi,"{\n");
   Code=Code.replace(/}/gi,"\n}\n");
+  Code=Etest(Code);
   Ecompiler(Code,Str);
 }
 function reCode(Codes){
