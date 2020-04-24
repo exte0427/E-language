@@ -45,6 +45,8 @@ function e(Codes){
   }
   Code=newCode;
   Code=Code.replace(/:/gi,"\n");
+  Code=Code.replace(/</gi,"/*");
+  Code=Code.replace(/>/gi,"*/");
   Code=Code.replace(/{/gi,"{\n");
   Code=Code.replace(/}/gi,"\n}\n");
   Ecompiler(Code,Str);
@@ -53,7 +55,7 @@ function reCode(Codes){
   let newCode="";
   let is=0;
   for(let i=0;i<Codes.length;i++){
-    if(Codes.charAt(i)==`"`){
+    if(Codes.charAt(i)==`"` || Codes.charAt(i)==`'`){
       if(is%2==0){
         newCode=newCode+"§";
       }
@@ -79,7 +81,12 @@ function Egrammer(Code){
   if(Estrcut(Code,0,2)=="new"){
     let Codes=Code.split("=");
     if(Codes[1].indexOf("Array")==-1){
-      return "let "+Codes[0].replace("new ","")+" = "+Codes[1];
+      if(Codes[1].indexOf("Const")==-1){
+        return "let "+Codes[0].replace("new ","")+" = "+Codes[1];
+      }
+      else{
+        return "const "+Codes[0].replace("new ","")+" = "+Codes[1].replace("Const");
+      }
     }
     else{
       return "let "+Codes[0].replace("new ","")+" = new Array("+Codes[1].replace("Array[","").replace("]","")+")";
@@ -87,9 +94,6 @@ function Egrammer(Code){
   }
   if(Estrcut(Code,0,0)=="}"){
     return "}";
-  }
-  if(Estrcut(Code,0,0)=="<"){
-    return "//"+Code.replace("<","").replace(">","");
   }
   if(Estrcut(Code,0,3)=="load"){
     if(Code.replace("load ","").startsWith("http")){
