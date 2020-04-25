@@ -1,3 +1,4 @@
+let letd=[];
 function Etest(Code){
   let Codes=Code.split("\n");
   let newCode="";
@@ -168,5 +169,9 @@ function Egrammer(Code){
   }
   if(Estrcut(Code,0,2)=="put"){
     return "console.log("+Code.replace("put ","")+")";
+  }
+  if(letd.indexOf(Code.split("=")[0].replace(/ /gi,""))==-1 && Code.indexOf("=")!=-1){
+    letd.push(Code.split("=")[0].replace(/ /gi,""));
+    return "let "+Code.split("=")[0]+" = "+Code.split("=")[1];
   }
 return Code;}
