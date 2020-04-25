@@ -3,9 +3,12 @@ function Etest(Code){
   let newCode="";
   if(Codes.length<2){return Code;}
   for(let i=1;i<Codes.length;i++){
-    if(Espace(Codes[i])+2==Espace(Codes[i-1]) || Espace(Codes[i])+4==Espace(Codes[i-1])){
-      if(Codes[i].replace(/ /gi,"")=="" && i+1!=Codes.length){newCode=newCode+Codes[i]+"\n";}
-      else{newCode=newCode+"}\n"+Codes[i]+"\n";}
+    if(Espace(Codes[i])<Espace(Codes[i-1])){
+        let sttr="";
+        for(let j=0;j<Math.floor((Espace(Codes[i-1])-Espace(Codes[i]))/2);j++){
+          sttr=sttr+"}\n";
+        }
+        newCode=newCode+sttr+Codes[i]+"\n";
     }
     else{
       newCode=newCode+Codes[i]+"\n";
@@ -49,6 +52,8 @@ function Ecompiler(Codes,Str){
   eval(returnCodes);
 }
 function e(Codes){
+  Codes=Codes+"\n";
+  Codes="\n"+Codes;
   let Code=reCode(Codes);
   let Str=[];
   let newCode="";
@@ -137,7 +142,12 @@ function Egrammer(Code){
     }
     else{
       if(c[1]=="=>"){
-        return "for(let "+c[0]+"=0;"+c[0]+"<"+c[2]+".length;"+c[0]+"++){";
+        if(isNaN(c[2])){
+          return "for(let "+c[0]+"=0;"+c[0]+"<"+c[2]+";"+c[0]+"++){";
+        }
+        else{
+          return "for(let "+c[0]+"=0;"+c[0]+"<"+c[2]+".length;"+c[0]+"++){";
+        }
       }
       else{
         return "for(let "+c[0]+";"+c[1]+";"+c[2]+"){";
@@ -157,6 +167,6 @@ function Egrammer(Code){
     return "else{";
   }
   if(Estrcut(Code,0,2)=="put"){
-    return "console.log("+Code.replace("put","")+")";
+    return "console.log("+Code.replace("put ","")+")";
   }
 return Code;}
