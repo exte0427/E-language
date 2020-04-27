@@ -1,5 +1,6 @@
 let Str=[];
 function e(Codes){
+  Codes="\n"+Codes+"\n";
   let Code=Codes.split("\n");
   //주석 인식
   for(let i=0;i<Code.length;i++){
@@ -33,12 +34,7 @@ function compiler(Code){
       return 문법.while.replace("<1>",Codes[1]);
     }
     else if(Codes[2]=="=>"){
-      if(isNaN(Codes[3])==1){
-        return 문법.for.replace("<name>",Codes[1]).replace("<2>",Codes[3]);
-      }
-      else{
-        return 문법.for2.replace("<name>",Codes[1]).replace("<2>",Codes[3]);
-      }
+      return 문법.for2.replace("<name>",Codes[1]).replace("<2>",Codes[3]).replace("<name>",Codes[1]).replace("<name>",Codes[1]);
     }
   }
   if(Code.startsWith("if")){
@@ -52,20 +48,22 @@ function compiler(Code){
   if(Code.startsWith("not")){
     return 문법.else;
   }
-
+  if(Code.startsWith("log")){
+    return 문법.log.replace("<1>",Code.replace("log",""));
+  }
   //end
-  if(Code.replace(/ /gi,"")!=-1 && Code.indexOf("=")!=-1){
+  if(Code.replace(/ /gi,"").length!=0 && Code.indexOf("=")!=-1){
     return 문법.lett.replace("<1>",Code.split("=")[0]).replace("<2>",Code.split("=")[1]);
   }
   return Code;}
 let 문법 = {
   while:"while(<1>){",
-  for:"for(let <name>=0;<name><<2>,length;<name>++){",
   for2:"for(let <name>=0;<name><<2>;<name>++){",
   if:"if(<1>){",
   elseif:"else if(<1>){",
   else:"else{",
   lett:"let <1>=<2>;",
+  log:"console.log(<1>);",
 }
 function lastCode(Code){
   Code=Code.replace(/:/gi,"\n");
@@ -148,5 +146,5 @@ function Estrcut(index,a,b){
     return returnn;
 }
 function error(errormsg){
-  console.error('errormsg');
+  console.error(errormsg);
 }
