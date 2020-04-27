@@ -1,5 +1,8 @@
 let Str=[];
+let vars=[];
 function e(Codes){
+  vars=[];
+  Str=[];
   Codes="\n"+Codes+"\n";
   let Code=Codes.split("\n");
   //주석 인식
@@ -22,7 +25,7 @@ function e(Codes){
   }
   Code=returnCode;
   for(let i=0;Code.indexOf("<-str->")!=-1;i++){
-    Code=Code.replace("<-str->",`"`+Str[i]+`"`);
+    Code=Code.replace("<-str->",`"${Str[i]}"`);
   }
   eval(Code);
 }
@@ -52,7 +55,8 @@ function compiler(Code){
     return 문법.log.replace("<1>",Code.replace("log",""));
   }
   //end
-  if(Code.replace(/ /gi,"").length!=0 && Code.indexOf("=")!=-1){
+  if(Code.replace(/ /gi,"").length!=0 && Code.indexOf("=")!=-1 && vars.indexOf(Code.split("=")[0].replace(/ /gi,""))==-1){
+    vars.push(Code.split("=")[0].replace(/ /gi,""));
     return 문법.lett.replace("<1>",Code.split("=")[0]).replace("<2>",Code.split("=")[1]);
   }
   return Code;}
