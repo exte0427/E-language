@@ -63,8 +63,8 @@ function spaceNum(str){
 //컴파일 관련 함수를 불러오는곳
 function err(msg){throw new Error(msg);}
 function run(data){
-    data=transform(data); //{} , " " 없에기 등등
-    return data;
+    data=compiler(transform(data).split("\n")); //{} , " " 없에기 등등 //컴파일
+    return data; //eval data
 }
 function transform(data){
     data="\n"+data+"\n"
@@ -93,6 +93,45 @@ function transform(data){
     code=code.join("\n");code=code.split("\n"); // code[i]=code[i]+"\n}" 에서 추가한 \n을 배열로 만듬
     code=code.map(a=>a.strcut(spaceNum(a),a.length)); // 코드에 space를 제거
     return code.join("\n");
+}
+function compiler(a){
+    for(let i=0;i<a.length;i++){
+        
+    }
+}
+function custom(str){
+    let k=true;
+    let now=true;
+    if(str.startsWith("!")){
+        k=false;
+        str=str.replace("!","");
+    }
+    else if(str.startsWith("false")){
+        k=false;
+        str=str.replace("false ","");
+    }
+    else if(str.startsWith("true")){
+        k=true;
+        str=str.replace("true ","");
+    }
+    else if(str.startsWith("not")){
+        k=false;
+        str=str.replace("not ","");
+    }
+
+
+    if(k==false){
+        if(now==true){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    else{
+        return now;
+    }
+
 }
 /**
  * log "hi world"
