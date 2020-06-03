@@ -7,7 +7,6 @@
  */
 
 //필요한 함수를 불러오는 곳
-
 String.prototype.strcut = function(a,b){
     let returnSTR="";
     for(let i=a;i<=b;i++){
@@ -61,9 +60,57 @@ function spaceNum(str){
 }
 
 //컴파일 관련 함수를 불러오는곳
+let str=[];
+function stringdel(a){
+    let code="";
+    let o=0;
+    for(let i=0;i<a.length;i++){
+        if(a.charAt(i)=="`"){
+            let first=i;
+            let j=0;
+            for(j=first+1;a.charAt(j)!="`";j++){}
+            str.push(a.strcut(first,j).replace("<","${").replace(">","}"));
+            code=code+"<str"+o+">";
+            o++;
+            i=j;
+        }
+        else if(a.charAt(i)==`'`){
+            let first=i;
+            let j=0;
+            for(j=first+1;a.charAt(j)!="'";j++){}
+            str.push(a.strcut(first,j));
+            code=code+"<str"+o+">";
+            o++;
+            i=j;
+        }
+        else if(a.charAt(i)==`"`){
+            let first=i;
+            let j=0;
+            for(j=first+1;a.charAt(j)!="'";j++){}
+            str.push(a.strcut(first,j));
+            code=code+"<str"+o+">";
+            o++;
+            i=j;
+        }
+        else if(a.charAt(i)=="#"){
+            let first=i;
+            let j=0;
+            for(j=first+1;a.charAt(j)!="\n";j++){
+                if(j>=a.length){
+                    break;
+                }
+            }
+            i=j;
+        }
+        else{
+            code=code+a.charAt(i);
+        }
+    }
+    return code;
+}
 function err(msg){throw new Error(msg);}
 function run(data){
-    data=compiler(transform(data).split("\n")); //{} , " " 없에기 등등 //컴파일
+    data=compiler(transform(stringdel(data)).split("\n")); //{} , " " 없에기 등등 //컴파일
     return data; //eval data
 }
 function transform(data){
@@ -96,8 +143,52 @@ function transform(data){
 }
 function compiler(a){
     for(let i=0;i<a.length;i++){
-        
+        if(a[i]==""){
+            a.splice(i,1);
+            i--;
+        }
     }
+    let returnCode="";
+    //--------------------------------------------------------------------------------------------------------------------------
+    const codes=[
+        {
+            //repeat a in 1,3 // repeat a in 3 // repeat a==10
+            str:["repeat <> in <>,<>","repeat <> in <>","repeat <>"],
+            datas:["for(<data1>=<data2>;<data1><<data3>;<data1>++){","for(<data1>=0;<data1><<data2>;<data1>++){","while(<data1>){"]
+        },
+        {
+            // a=10
+            str:["<>=<>"],
+            datas:["let <data1>=<data2>;"]
+        }
+    ];
+    //--------------------------------------------------------------------------------------------------------------------------
+    for(let i=0;i<a.length;i++){
+        let returns="";
+        let br=0;
+        for(let j=0;j<codes.length;j++){
+            for(let pp=0;pp<codes[j].str.length;pp++){
+                if(a[i].compare(codes[j].str[pp])){
+                    let d=a[i].data(codes[j].str[pp]);
+                    let c=codes[j].datas[pp];
+                    while(c.indexOf("<data")!=-1){
+                        let o=d[c.strcut(c.indexOf("<data")+5,c.indexOf(">")-1)*1-1];
+                        c=c.replace("<data"+c.strcut(c.indexOf("<data")+5,c.indexOf(">")-1),"");
+                        c=c.replace(">",o);
+                    }
+                    returns=c;
+                    br=1;
+                    break;
+                }
+            }
+        }
+        if(br=0){
+            c=a[i];
+        }
+        returnCode=returnCode+"\n"+returns;
+    }
+    returnCode=returnCode.replace("\n","");
+    console.log(returnCode);
 }
 function custom(str){
     let k=true;
@@ -133,6 +224,9 @@ function custom(str){
     }
 
 }
+run(`
+repeat a in 1,3
+`)
 /**
  * log "hi world"
  */
