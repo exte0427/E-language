@@ -61,6 +61,14 @@ function spaceNum(str){
 
 //컴파일 관련 함수를 불러오는곳
 let str=[];
+function decode(code){
+    while(code.indexOf("&*&*str")!=-1){
+        code=code.replace("&*&*str","ppppppppppdp");
+        let i=code.strcut(code.indexOf("ppppppppppdp")+"ppppppppppdp".length,code.indexOf("&*&*")-1)*1;
+        code=code.replace("ppppppppppdp"+i+"&*&*","`"+str[i]+"`");
+    }
+    return code;
+}
 function stringdel(a){
     let code="";
     let o=0;
@@ -70,7 +78,7 @@ function stringdel(a){
             let j=0;
             for(j=first+1;a.charAt(j)!="`";j++){}
             str.push(a.strcut(first,j).replace("<","${").replace(">","}"));
-            code=code+"<str"+o+">";
+            code=code+"&*&*str"+o+"&*&*";
             o++;
             i=j;
         }
@@ -78,17 +86,17 @@ function stringdel(a){
             let first=i;
             let j=0;
             for(j=first+1;a.charAt(j)!="'";j++){}
-            str.push(a.strcut(first,j));
-            code=code+"<str"+o+">";
+            str.push(a.strcut(first+1,j-1));
+            code=code+"&*&*str"+o+"&*&*";
             o++;
             i=j;
         }
         else if(a.charAt(i)==`"`){
             let first=i;
             let j=0;
-            for(j=first+1;a.charAt(j)!="'";j++){}
-            str.push(a.strcut(first,j));
-            code=code+"<str"+o+">";
+            for(j=first+1;a.charAt(j)!=`"`;j++){}
+            str.push(a.strcut(first+1,j-1));
+            code=code+"&*&*str"+o+"&*&*";
             o++;
             i=j;
         }
@@ -110,8 +118,7 @@ function stringdel(a){
 }
 function err(msg){throw new Error(msg);}
 function run(data){
-    data=compiler(transform(stringdel(data)).split("\n")); //{} , " " 없에기 등등 //컴파일
-    return data; //eval data
+    return eval(decode(compiler(transform(stringdel(data)).split("\n"))));
 }
 function transform(data){
     data="\n"+data+"\n"
@@ -123,7 +130,7 @@ function transform(data){
         if(spaceNum(code[i])<futurespace){
             //괄호가 추가 되어야 하는 상태
             if(futurespace-2 == spaceNum(code[i])){
-                code[i]=code[i]+"{";
+                //code[i]=code[i]+"{";
             }
             else{
                 err("한번에 두번 괄호를 열 수 없습니다.");
@@ -158,8 +165,8 @@ function compiler(a){
         },
         {
             // a=10
-            str:["<>=<>"],
-            datas:["let <data1>=<data2>;"]
+            str:["<>=<>,<>","<>=<>"],
+            datas:["let <data1>=[<data2>,<data3>];","let <data1>=<data2>;"]
         }
     ];
     //--------------------------------------------------------------------------------------------------------------------------
@@ -180,15 +187,17 @@ function compiler(a){
                     br=1;
                     break;
                 }
+                //if(br==1){break;}
             }
+            if(br==1){break;}
         }
-        if(br=0){
-            c=a[i];
+        if(br==0){
+            returns=a[i];
         }
         returnCode=returnCode+"\n"+returns;
     }
     returnCode=returnCode.replace("\n","");
-    console.log(returnCode);
+    return returnCode;
 }
 function custom(str){
     let k=true;
@@ -225,7 +234,11 @@ function custom(str){
 
 }
 run(`
-repeat a in 1,3
+b="hello world","s"
+sdfsdf
+repeat a in b
+  d
+s
 `)
 /**
  * log "hi world"
