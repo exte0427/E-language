@@ -157,11 +157,16 @@ function compiler(a){
     }
     let returnCode="";
     //--------------------------------------------------------------------------------------------------------------------------
+    //@last = 자동으로 위치를 찾아서 넣어줌
     const codes=[
         {
             //repeat a in 1,3 // repeat a in 3 // repeat a==10
-            str:["repeat <> in <>,<>","repeat <> in <>","repeat <>"],
-            datas:["for(<data1>=<data2>;<data1><<data3>;<data1>++){","for(<data1>=0;<data1><<data2>;<data1>++){","while(<data1>){"]
+            str:["repeat <> in <>,<>","repeat <> in <>","repeat <>","until <>"],
+            datas:["for(<data1>=<data2>;<data1><<data3>;<data1>++){","for(<data1>=0;<data1><<data2>;<data1>++){","while(<data1>){","while(!<data1>)"]
+        },
+        {
+            str:["wait <>"],
+            datas:["setTimeout(()=>{@last},<data1>*1000);"] //아직 조건문은 안됨
         },
         {
             // a=10
@@ -177,7 +182,7 @@ function compiler(a){
             for(let pp=0;pp<codes[j].str.length;pp++){
                 if(a[i].compare(codes[j].str[pp])){
                     let d=a[i].data(codes[j].str[pp]);
-                    let c=codes[j].datas[pp];
+                    let c=codes[j].datas[pp].split("@last")[0];
                     while(c.indexOf("<data")!=-1){
                         let o=d[c.strcut(c.indexOf("<data")+5,c.indexOf(">")-1)*1-1];
                         c=c.replace("<data"+c.strcut(c.indexOf("<data")+5,c.indexOf(">")-1),"");
@@ -185,6 +190,41 @@ function compiler(a){
                     }
                     returns=c;
                     br=1;
+                    if(codes[j].datas[pp].split("@last").length>1){
+                        let t=codes[j].datas[pp].split("@last")[1];
+                        let stroo="";
+                        let ok=0;
+                        for(let oo=i;oo<a.length;oo++){
+                            ok++;
+                            stroo=stroo+"\n"+a[oo];
+                        }
+                        stroo=stroo.replace("\n","").split("\n");
+                        let index="";
+                        stroo.map(a=>{
+                            if(a.indexOf("}")!=-1){
+                                index=a;
+                            }
+                        });
+                        if(index==""){
+                            index=stroo.length;
+                        }
+                        else{
+                            index=stroo.indexOf(index);
+                        }
+                        a[index-1+ok]=a[index-1+ok]+"\n"+t;
+                        let op=[];
+                        a.map(a=>{
+                            a=a.split("\n");
+                            for(let i=0;i<a.length;i++){
+                                if(a[i]=="undefined"){
+                                    op.push("");
+                                }
+                                else{
+                                    op.push(a[i]);
+                                }
+                            }
+                        });
+                    }
                     break;
                 }
                 //if(br==1){break;}
@@ -234,11 +274,7 @@ function custom(str){
 
 }
 run(`
-b="hello world","s"
-sdfsdf
-repeat a in b
-  d
-s
+wait 1
 `)
 /**
  * log "hi world"
